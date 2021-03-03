@@ -1,11 +1,45 @@
-import React from 'react';
 
-const Formulario = () => {
+import React,{useState} from 'react';
+
+const Formulario = ({guardarBusquedaLetra}) => {
+
+    const [busqueda, guardarBusqueda] = useState ({
+        artista:'',
+        cancion:''
+    })
+
+    const [error, guardarError] = useState (false);
+
+    const {cancion, artista} = busqueda;
+
+    //Funcion para cada input leer su contenido
+    const actualizarState = e => {
+        guardarBusqueda ({
+            ...busqueda,
+            [e.target.name] : e.target.value
+        })
+    }
+    //Consultar a las apis
+    const buscarInformacion = e => {
+        e.preventDefault();
+        if (artista.trim() === '' || cancion.trim() === '') {
+            guardarError(true);
+            return;
+            
+        }
+        guardarError(false);
+        //Pasar al componente Principal
+        guardarBusquedaLetra={busqueda}
+
+    }
     return (
         <div className="bg-info">
             <div className="container">
+            {error ? <p className="alert alert-danger text-center p-2"> Todos los Campos son Obligatorios</p> : null}
                 <div className="row">
-                    <form className="col card text-white bg-transparent mb-5 pt-5 pb-2" >
+                    <form 
+                    onSubmit={buscarInformacion}
+                    className="col card text-white bg-transparent mb-5 pt-5 pb-2" >
                         <fieldset>
                             <legend className="text-center">
                                 Buscador Letras Canciones
@@ -19,7 +53,9 @@ const Formulario = () => {
                                             type="text"
                                             className="form-control"
                                             name="artista"
-                                            placeholder="Nombre de Artista"/>
+                                            value={artista}
+                                            placeholder="Nombre de Artista"
+                                            onChange={actualizarState}/>
                                     </div>
                                 </div>
 
@@ -30,7 +66,9 @@ const Formulario = () => {
                                             type="text"
                                             className="form-control"
                                             name="cancion"
-                                            placeholder="Nombre de Cancion"/>
+                                            value={cancion}
+                                            placeholder="Nombre de Cancion"
+                                            onChange={actualizarState}/>
                                     </div>
                                 </div>
                             </div>
